@@ -1,0 +1,27 @@
+---
+title: "Simpsons Characters"
+output: html_notebook
+---
+
+```{r, error=TRUE}
+ep_char <- read.csv2("support/simpsons_ep-char.csv", sep = ",")
+characters <- read.csv2("support/simpsonsNodes.csv", sep = ",")
+
+chars <- ep_char$character_id
+eps <- ep_char$episode_id
+
+char_freq <- as.data.frame(table(chars))
+
+most_freq_chars <- head(char_freq[order(-char_freq$Freq), , drop = FALSE])
+
+most_freq_vals <- head(char_freq[order(-char_freq$Freq), , drop = FALSE]$Freq)
+most_freq_ids <- head(char_freq[order(-char_freq$Freq), , drop = FALSE]$chars)
+
+no_eps <- tail(eps, n=1)
+
+perc_freq <- unlist(lapply(most_freq_vals, function (char) return(round(char / no_eps * 100, 1))))
+character_names <- unlist(lapply(most_freq_ids, function (index) return(characters$char_name[index])))
+
+
+barplot(perc_freq, width = 1, xlab="Character Names", ylab="Percentage episodes", ylim=c(0,100), col=rainbow(6), legend=strtrim(character_names, 20))
+```
